@@ -1,6 +1,6 @@
 //! Build script for playwright-core
 //!
-//! Downloads and extracts the Playwright driver from Azure CDN during build time.
+//! Downloads and extracts the Playwright driver during build time.
 //! This matches the approach used by playwright-python, playwright-java, and playwright-dotnet.
 
 use std::env;
@@ -11,8 +11,12 @@ use std::path::{Path, PathBuf};
 /// Playwright driver version to download
 const PLAYWRIGHT_VERSION: &str = "1.58.2";
 
-/// Azure CDN base URL for Playwright drivers
-const DRIVER_BASE_URL: &str = "https://playwright.azureedge.net/builds/driver";
+/// GitHub Releases base URL for Patchright Playwright drivers
+///
+/// The upstream Playwright project publishes drivers to Azure CDN, but Patchright
+/// publishes patched drivers via GitHub Releases.
+const DRIVER_BASE_URL: &str =
+    "https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/releases/download";
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -59,9 +63,7 @@ fn main() {
         Err(e) => {
             println!("cargo:warning=Failed to download Playwright driver: {}", e);
             println!("cargo:warning=The driver will need to be installed manually or via npm.");
-            println!(
-                "cargo:warning=You can set PLAYWRIGHT_DRIVER_PATH to specify driver location."
-            );
+            println!("cargo:warning=You can set PLAYWRIGHT_DRIVER_PATH to specify driver location.");
         }
     }
 }
@@ -156,7 +158,8 @@ fn download_and_extract_driver(drivers_dir: &Path, platform: &str) -> io::Result
 
     // Download URL
     let filename = format!("playwright-{}-{}.zip", PLAYWRIGHT_VERSION, platform);
-    let url = format!("{}/{}", DRIVER_BASE_URL, filename);
+    // Patchright tags releases with a leading 'v' (e.g. v1.58.2)
+    let url = format!("{}/v{}/{}", DRIVER_BASE_URL, PLAYWRIGHT_VERSION, filename);
 
     println!("cargo:warning=Downloading from: {}", url);
 
