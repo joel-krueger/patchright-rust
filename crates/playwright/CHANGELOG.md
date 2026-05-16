@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bumped transitive `openssl` from 0.10.78 to 0.10.79 to pick up the fix for [GHSA-xp3w-r5p5-63rr](https://github.com/advisories/GHSA-xp3w-r5p5-63rr) / [CVE-2026-42327](https://www.cve.org/CVERecord?id=CVE-2026-42327) — undefined behaviour in `X509Ref::ocsp_responders` for certificates with non-UTF-8 OCSP URLs. Affected the workspace `Cargo.lock` and the fuzz target's lockfile; both now resolve to 0.10.79+. We pull `openssl` transitively via `native-tls` (the default TLS feature); no public-API impact. Detected by Dependabot (alerts #15 / #16); `cargo audit` had not yet picked up the advisory at fix time.
 - Refreshed `supply-chain/imports.lock` exemptions for the bumped `openssl` and `openssl-sys` versions via `cargo vet regenerate exemptions`. `cargo vet`, `cargo audit`, `cargo deny check` all green post-bump.
+- Adopted transitively-trusted publishers (`cargo vet trust --all`) for BurntSushi, Lokathor, epage, seanmonstar, and kennykerr (the latter three with `--allow-multiple-publishers` for flagship multi-maintainer crates like `clap`, `tower`, `windows-*`). Also added the fermyon trust import. Net effect: **215 → 168 exemptions** (-47, ~22% reduction) with zero first-hand audit work — every dropped exemption is now backed by a trusted publisher already vetted by 2+ trust roots we import (Mozilla, Google, ISRG, etc.). `cargo vet`, `cargo audit`, `cargo deny check` all green.
 
 ### Breaking changes
 
