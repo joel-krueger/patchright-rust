@@ -25,7 +25,7 @@ This roadmap outlines the path to a production-ready `playwright-rust` library. 
 - ✅ **v0.8.0** - Typed Evaluate API complete - 2025-12-30
 - ✅ **v0.8.1** - Persistent Contexts & App Mode complete - 2026-01-04
 - ✅ **v0.8.x through v0.12.0** - Full Python API parity + agent integration complete (2026-04-19)
-- 🚧 **v0.13.0** - Playwright 1.59 completeness + agent codegen + companion crates (code complete on `main`, dogfooding before tag cut)
+- ✅ **v0.13.0** - Playwright 1.59 completeness + agent codegen + companion crates - 2026-05-23
 - 🚧 **v1.0.0** - Real-World Validation & Final Polish
 - 🔮 **v1.1.0** - Future enhancements
 
@@ -197,7 +197,7 @@ This roadmap outlines the path to a production-ready `playwright-rust` library. 
 
 **Goal:** Catch up to Playwright 1.59 (screencast, debugger, picker, CDP events, aria-snapshot options), ship the agent-codegen surfaces (programmatic locator picking, trace-file consumption from Rust), and trim the default dep tree for leaner cold builds.
 
-**Status:** 🚧 Code complete on `main` (`[Unreleased]`); dogfooding before the tag cut. See [`crates/playwright/CHANGELOG.md`](../crates/playwright/CHANGELOG.md) for the full list of additions, changes, and breaking changes.
+**Status:** ✅ Shipped 2026-05-23. `playwright-rs 0.13.0`, `playwright-rs-macros 0.1.0`, and `playwright-rs-trace 0.1.0` published to crates.io. See [`crates/playwright/CHANGELOG.md`](../crates/playwright/CHANGELOG.md) for the full list of additions, changes, and breaking changes.
 
 **Milestones (all landed):**
 - ✅ Playwright 1.59 parity — `Page::screencast`, `Debugger` + `BrowserContext::debugger()`, `Page::pick_locator()`, `CDPSession::on(method, handler)` event side, `AriaSnapshotOptions`, `Tracing.start({live: true})`, `Page::aria_snapshot()`, `Locator::normalize()`, `LaunchOptions::artifacts_dir`, `Page::clear_console_messages()` / `clear_page_errors()` (closed: #69, #70, #71, #72, #73, #74, #75, #76, #79; umbrella #55)
