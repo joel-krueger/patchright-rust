@@ -1,13 +1,12 @@
 use leptos::prelude::*;
 
-/// A syntax-neutral code block with an optional caption (e.g. "Python" / "Rust").
+/// Renders a pre-highlighted code snippet (build-time syntect output) with an
+/// optional caption above it.
 #[component]
 pub fn CodeBlock(
-    /// The code to display, verbatim.
-    code: &'static str,
-    /// Optional label shown above the block.
-    #[prop(optional, into)]
-    caption: Option<&'static str>,
+    /// Highlighted inner HTML (token spans), from `crate::snippets`.
+    html: &'static str,
+    #[prop(optional, into)] caption: Option<&'static str>,
 ) -> impl IntoView {
     view! {
         <div class="flex flex-col">
@@ -16,9 +15,10 @@ pub fn CodeBlock(
                     {c}
                 </span>
             })}
-            <pre class="overflow-x-auto rounded-lg border border-rust-700/40 bg-ink-800 p-4 text-sm leading-relaxed text-rust-50/90">
-                <code>{code}</code>
-            </pre>
+            <pre
+                class="overflow-x-auto rounded-lg border border-rust-700/40 bg-ink-800 p-4 text-sm leading-relaxed"
+                inner_html=html
+            ></pre>
         </div>
     }
 }

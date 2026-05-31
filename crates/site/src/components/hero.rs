@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 
+use super::icons::{self, Icon};
+
 const CRATES_IO: &str = "https://crates.io/crates/playwright-rs";
 const DOCS_RS: &str = "https://docs.rs/playwright-rs";
 const GITHUB: &str = "https://github.com/padamson/playwright-rust";
@@ -15,8 +17,11 @@ pub fn Hero() -> impl IntoView {
                 "Playwright for Rust"
             </h1>
             <p id="hero-tagline" class="mt-5 max-w-2xl text-lg text-rust-50/80">
-                "Cross-browser end-to-end testing for Rust — official-quality bindings for "
-                "Microsoft Playwright, with the same API you already know from Python, Java, and .NET."
+                "Cross-browser end-to-end testing for Rust. The same Playwright API you "
+                "already know from Python, Java, and .NET."
+            </p>
+            <p id="unofficial" class="mt-3 text-xs text-rust-50/50">
+                "Unofficial, community-maintained bindings for Microsoft Playwright."
             </p>
 
             <div class="mt-7 flex flex-wrap items-center justify-center gap-2">
@@ -26,12 +31,6 @@ pub fn Hero() -> impl IntoView {
                 <a href=DOCS_RS>
                     <img alt="docs.rs" src="https://docs.rs/playwright-rs/badge.svg"/>
                 </a>
-                <a href=GITHUB>
-                    <img
-                        alt="CI"
-                        src="https://github.com/padamson/playwright-rust/actions/workflows/test.yml/badge.svg"
-                    />
-                </a>
                 <img
                     alt="Playwright 1.60.0"
                     src="https://img.shields.io/badge/Playwright-1.60.0-45ba4b"
@@ -40,22 +39,25 @@ pub fn Hero() -> impl IntoView {
 
             <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <a
-                    id="cta-get-started"
+                    id="cta-docs"
                     href=DOCS_RS
-                    class="rounded-lg bg-rust-500 px-5 py-2.5 font-semibold text-rust-50 transition hover:bg-rust-600"
+                    class="inline-flex items-center gap-2 rounded-lg bg-rust-500 px-5 py-2.5 font-semibold text-rust-50 transition hover:bg-rust-600"
                 >
-                    "Get started"
+                    <Icon path=icons::DOCS_RS/>
+                    "Docs"
                 </a>
                 <a
                     href=GITHUB
-                    class="rounded-lg border border-rust-700/50 px-5 py-2.5 font-semibold text-rust-50 transition hover:border-rust-500"
+                    class="inline-flex items-center gap-2 rounded-lg border border-rust-700/50 px-5 py-2.5 font-semibold text-rust-50 transition hover:border-rust-500"
                 >
-                    "View on GitHub"
+                    <Icon path=icons::GITHUB/>
+                    "GitHub"
                 </a>
                 <a
                     href=CRATES_IO
-                    class="rounded-lg border border-rust-700/50 px-5 py-2.5 font-semibold text-rust-50 transition hover:border-rust-500"
+                    class="inline-flex items-center gap-2 rounded-lg border border-rust-700/50 px-5 py-2.5 font-semibold text-rust-50 transition hover:border-rust-500"
                 >
+                    <img src="/crates-io.png" alt="" class="h-5 w-auto"/>
                     "crates.io"
                 </a>
             </div>

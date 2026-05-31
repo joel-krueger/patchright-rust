@@ -9,7 +9,8 @@ pub fn FeatureCard(
     id: &'static str,
     title: &'static str,
     blurb: &'static str,
-    code: &'static str,
+    /// Highlighted snippet HTML from `crate::snippets`.
+    html: &'static str,
 ) -> impl IntoView {
     view! {
         <div
@@ -19,7 +20,7 @@ pub fn FeatureCard(
             <h3 class="text-lg font-semibold text-rust-300">{title}</h3>
             <p class="mt-1 mb-4 text-sm text-rust-50/70">{blurb}</p>
             <div class="mt-auto">
-                <CodeBlock code=code/>
+                <CodeBlock html=html/>
             </div>
         </div>
     }

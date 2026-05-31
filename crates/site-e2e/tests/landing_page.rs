@@ -77,7 +77,7 @@ async fn landing_page_boots_and_shows_hero() {
         .await
         .expect("install snippet should show the crate version");
 
-    // Python<->Rust comparison shows both sides.
+    // Comparison: Python is the default tab, Rust is always shown alongside.
     let comparison = page.locator("#comparison").await;
     expect(comparison.clone())
         .to_be_visible()
@@ -86,11 +86,28 @@ async fn landing_page_boots_and_shows_hero() {
     expect(comparison.clone())
         .to_contain_text("sync_playwright")
         .await
-        .expect("comparison should show the Python side");
-    expect(comparison)
+        .expect("default tab should show the Python side");
+    expect(comparison.clone())
         .to_contain_text("Playwright::launch")
         .await
         .expect("comparison should show the Rust side");
+
+    // Interactive tabs: clicking Java switches the snippet (exercises real
+    // client-side reactivity in the WASM app).
+    page.locator("[data-lang='Java']")
+        .await
+        .click(None)
+        .await
+        .expect("Java tab should be clickable");
+    expect(comparison.clone())
+        .to_contain_text("Playwright.create()")
+        .await
+        .expect("clicking Java should switch to the Java snippet");
+    expect(comparison)
+        .not()
+        .to_contain_text("sync_playwright")
+        .await
+        .expect("the Python snippet should no longer be shown");
 
     // Every advertised feature card renders.
     for id in [

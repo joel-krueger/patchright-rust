@@ -14,3 +14,11 @@ publish = false
 
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
+
+# Build-time only: highlight code snippets to HTML so nothing is shipped to the
+# WASM bundle. `default-fancy` swaps the C oniguruma regex for pure-Rust
+# fancy-regex.
+[build-dependencies]
+syntect = { version = "5.2", default-features = false, features = [
+    "default-fancy",
+] }
