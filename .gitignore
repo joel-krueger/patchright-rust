@@ -4,6 +4,13 @@
 *.pdb
 # Cargo.lock is committed for CI reproducibility (cargo vet requires exact versions)
 
+# Landing-page crates are excluded from the workspace, so they build into their
+# own target/ dirs; the site also emits a dist/ via Trunk. Their Cargo.lock is
+# committed (they're apps) for reproducible builds.
+/crates/site/dist/
+/crates/site/target/
+/crates/site-e2e/target/
+
 # IDE
 .vscode/
 .idea/
