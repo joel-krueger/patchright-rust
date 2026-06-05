@@ -21,7 +21,7 @@ pub fn Hero() -> impl IntoView {
                 "already know from Python, Java, and .NET."
             </p>
             <p id="unofficial" class="mt-3 text-xs text-rust-50/50">
-                "Unofficial, community-maintained bindings for Microsoft Playwright."
+                "Unofficial, community-maintained Rust bindings for Microsoft Playwright."
             </p>
 
             <div class="mt-7 flex flex-wrap items-center justify-center gap-2">

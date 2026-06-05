@@ -21,7 +21,9 @@ use std::path::{Path, PathBuf};
 
 use axum::Router;
 use playwright_rs::expect;
-use playwright_rs::protocol::{Page, Playwright, TracingStartOptions, TracingStopOptions};
+use playwright_rs::protocol::{
+    Animations, Page, Playwright, ScreenshotOptions, TracingStartOptions, TracingStopOptions,
+};
 use tower_http::services::ServeDir;
 
 fn dist_dir() -> PathBuf {
@@ -45,10 +47,16 @@ async fn serve(dist: &PathBuf) -> (SocketAddr, tokio::task::JoinHandle<()>) {
 /// step's receipt is distinct (a viewport screenshot of adjacent sections looks
 /// nearly identical).
 async fn shot(page: &Page, steps: &Path, file: &str, selector: &str) {
+    // Freeze CSS animations/transitions so the receipt captures the settled
+    // state. This consumes the `animations` option that dogfooding this very
+    // site added to playwright-rs.
+    let opts = ScreenshotOptions::builder()
+        .animations(Animations::Disabled)
+        .build();
     let bytes = page
         .locator(selector)
         .await
-        .screenshot(None)
+        .screenshot(Some(opts))
         .await
         .unwrap_or_else(|e| panic!("screenshot {selector}: {e:?}"));
     std::fs::write(steps.join(file), bytes)
@@ -65,7 +73,11 @@ async fn landing_page_works_as_advertised() {
         );
         return;
     }
-    let steps = dist.join("receipts").join("steps");
+    // Write receipts into the site's `public/receipts/` source dir (not dist/).
+    // Trunk's copy-dir re-copies it into dist on every build, so receipts
+    // survive `trunk serve` rebuilds and show up with hot reload.
+    let receipts = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../site/public/receipts");
+    let steps = receipts.join("steps");
     std::fs::create_dir_all(&steps).expect("create receipts/steps dir");
 
     let (addr, server) = serve(&dist).await;
@@ -222,12 +234,7 @@ async fn landing_page_works_as_advertised() {
     // Save the trace zip as the deep-dive receipt.
     tracing
         .stop(Some(TracingStopOptions {
-            path: Some(
-                dist.join("receipts")
-                    .join("trace.zip")
-                    .to_string_lossy()
-                    .into_owned(),
-            ),
+            path: Some(receipts.join("trace.zip").to_string_lossy().into_owned()),
         }))
         .await
         .expect("write trace receipt");
