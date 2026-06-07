@@ -11,6 +11,7 @@ examine_globs = [
     "crates/playwright/src/protocol/click.rs",
     "crates/playwright/src/protocol/screenshot.rs",
     "crates/playwright/src/protocol/drop_options.rs",
+    "crates/playwright/src/protocol/har_options.rs",
     "crates/playwright/src/protocol/select_option.rs",
     "crates/playwright/src/api/launch_options.rs",
     "crates/playwright/src/protocol/tap.rs",
