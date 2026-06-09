@@ -541,6 +541,7 @@ impl BrowserType {
             endpoint_url: endpoint_url.to_string(),
             headers: headers_array,
             slow_mo: options.slow_mo,
+            no_defaults: options.no_defaults,
             timeout: options.timeout.unwrap_or(crate::DEFAULT_TIMEOUT_MS),
         };
 
@@ -599,6 +600,8 @@ struct ConnectOverCdpParams {
     headers: Option<Vec<HeaderEntry>>,
     #[serde(rename = "slowMo", skip_serializing_if = "Option::is_none")]
     slow_mo: Option<f64>,
+    #[serde(rename = "noDefaults", skip_serializing_if = "Option::is_none")]
+    no_defaults: Option<bool>,
     timeout: f64,
 }
 

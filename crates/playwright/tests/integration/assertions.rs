@@ -1296,3 +1296,19 @@ async fn test_expect_page_to_have_screenshot() {
 
     browser.close().await.expect("Failed to close browser");
 }
+
+#[tokio::test]
+async fn test_to_have_css_pseudo() {
+    let (_pw, browser, page) = crate::common::setup().await;
+    page.set_content(
+        "<style>#x::before { content: 'x'; color: rgb(1, 2, 3); }</style><div id='x'>d</div>",
+        None,
+    )
+    .await
+    .expect("set content");
+    expect(page.locator("#x").await)
+        .to_have_css_pseudo("color", "rgb(1, 2, 3)", "::before")
+        .await
+        .expect("pseudo-element CSS should match");
+    browser.close().await.expect("close");
+}

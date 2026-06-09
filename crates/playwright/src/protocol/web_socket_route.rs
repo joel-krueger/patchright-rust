@@ -100,6 +100,24 @@ impl WebSocketRoute {
         &self.url
     }
 
+    /// Returns the WebSocket subprotocols the page requested (the
+    /// `Sec-WebSocket-Protocol` values) when opening this socket. Empty if none
+    /// were requested.
+    ///
+    /// See: <https://playwright.dev/docs/api/class-websocketroute#web-socket-route-protocols>
+    pub fn protocols(&self) -> Vec<String> {
+        self.base
+            .initializer()
+            .get("protocols")
+            .and_then(|v| v.as_array())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|x| x.as_str().map(String::from))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
     /// Connects this WebSocket to the actual server.
     ///
     /// After calling this method, all messages sent by the page are forwarded to

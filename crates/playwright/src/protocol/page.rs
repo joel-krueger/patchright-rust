@@ -3713,6 +3713,16 @@ impl Page {
             .await
     }
 
+    /// Clears all element highlights drawn by [`Locator::highlight`](crate::protocol::Locator::highlight).
+    ///
+    /// See: <https://playwright.dev/docs/api/class-page#page-hide-highlight>
+    #[tracing::instrument(level = "debug", skip_all, fields(guid = %self.guid()))]
+    pub async fn hide_highlight(&self) -> Result<()> {
+        self.channel()
+            .send_no_result("hideHighlight", serde_json::json!({}))
+            .await
+    }
+
     /// Forces garbage collection in the browser (Chromium only).
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-request-gc>

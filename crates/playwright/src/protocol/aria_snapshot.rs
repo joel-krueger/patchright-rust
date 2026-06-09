@@ -35,6 +35,9 @@ pub struct AriaSnapshotOptions {
     pub track: Option<String>,
     /// Maximum depth to descend in the accessibility tree.
     pub depth: Option<i32>,
+    /// When `true`, append each element's bounding box as
+    /// `[box=x,y,width,height]` (useful for AI/LLM visual reasoning).
+    pub boxes: Option<bool>,
     /// Override the default timeout (milliseconds).
     pub timeout: Option<f64>,
 }

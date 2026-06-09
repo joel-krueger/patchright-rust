@@ -2535,6 +2535,19 @@ impl ChannelOwner for BrowserContext {
                     .and_then(|v| v.as_str())
                     .map(|s| s.to_string());
 
+                let location =
+                    params
+                        .get("location")
+                        .map(|loc| crate::protocol::WebErrorLocation {
+                            url: loc
+                                .get("url")
+                                .and_then(|v| v.as_str())
+                                .unwrap_or("")
+                                .to_string(),
+                            line: loc.get("line").and_then(|v| v.as_i64()).unwrap_or(0) as i32,
+                            column: loc.get("column").and_then(|v| v.as_i64()).unwrap_or(0) as i32,
+                        });
+
                 let connection = self.connection();
                 let weberror_handlers = self.weberror_handlers.clone();
                 let weberror_waiters = self.weberror_waiters.clone();
@@ -2548,7 +2561,11 @@ impl ChannelOwner for BrowserContext {
                     };
 
                     // 1. Dispatch to context-level weberror handlers
-                    let web_error = crate::protocol::WebError::new(message.clone(), page.clone());
+                    let web_error = crate::protocol::WebError::new(
+                        message.clone(),
+                        page.clone(),
+                        location.clone(),
+                    );
                     let handlers = weberror_handlers.lock().unwrap().clone();
                     for handler in handlers {
                         if let Err(e) = handler(web_error.clone()).await {
@@ -2730,14 +2747,17 @@ impl ChannelOwner for BrowserContext {
                     .and_then(|v| v.as_str())
                     .unwrap_or("")
                     .to_string();
+                // 1.60 emits `line`/`column`; older drivers used
+                // `lineNumber`/`columnNumber` (deprecated, may be removed). Prefer
+                // the new keys, fall back to the legacy ones.
                 let loc_line = params
                     .get("location")
-                    .and_then(|v| v.get("lineNumber"))
+                    .and_then(|v| v.get("line").or_else(|| v.get("lineNumber")))
                     .and_then(|v| v.as_i64())
                     .unwrap_or(0) as i32;
                 let loc_col = params
                     .get("location")
-                    .and_then(|v| v.get("columnNumber"))
+                    .and_then(|v| v.get("column").or_else(|| v.get("columnNumber")))
                     .and_then(|v| v.as_i64())
                     .unwrap_or(0) as i32;
                 let page_guid_owned = params

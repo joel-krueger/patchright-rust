@@ -177,3 +177,26 @@ async fn test_page_to_match_aria_snapshot() {
 
     browser.close().await.expect("Failed to close browser");
 }
+
+#[tokio::test]
+async fn test_aria_snapshot_boxes() {
+    let (_playwright, browser, page) = crate::common::setup().await;
+    page.set_content("<h1>Hi</h1>", None)
+        .await
+        .expect("set content");
+    let opts = AriaSnapshotOptions {
+        boxes: Some(true),
+        ..Default::default()
+    };
+    let snap = page
+        .locator("body")
+        .await
+        .aria_snapshot(Some(opts))
+        .await
+        .expect("aria snapshot with boxes");
+    assert!(
+        snap.contains("[box="),
+        "boxes option should append bounding boxes, got:\n{snap}"
+    );
+    browser.close().await.ok();
+}

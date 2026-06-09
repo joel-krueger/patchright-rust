@@ -225,6 +225,13 @@ pub(crate) fn get_by_role_selector(role: AriaRole, options: Option<GetByRoleOpti
                 escape_for_attribute_selector(name, exact)
             ));
         }
+        if let Some(description) = &opts.description {
+            let exact = opts.exact.unwrap_or(false);
+            selector.push_str(&format!(
+                "[description={}]",
+                escape_for_attribute_selector(description, exact)
+            ));
+        }
         if let Some(pressed) = opts.pressed {
             selector.push_str(&format!("[pressed={}]", pressed));
         }
@@ -437,11 +444,21 @@ pub struct GetByRoleOptions {
     pub level: Option<u32>,
     /// The accessible name of the element.
     pub name: Option<String>,
-    /// Whether `name` matching is exact (case-sensitive, full-string).
-    /// Default is false (case-insensitive substring).
+    /// The accessible description of the element (WAI-ARIA), matched in addition
+    /// to role/name. Honors `exact` like `name`.
+    pub description: Option<String>,
+    /// Whether `name`/`description` matching is exact (case-sensitive,
+    /// full-string). Default is false (case-insensitive substring).
     pub exact: Option<bool>,
     /// Whether the element is pressed (for toggle buttons).
     pub pressed: Option<bool>,
+}
+
+/// Options for [`Locator::highlight()`].
+#[derive(Debug, Clone, Default)]
+pub struct HighlightOptions {
+    /// Extra inline CSS applied to the debug highlight overlay.
+    pub style: Option<String>,
 }
 
 /// Options for [`Locator::filter()`].
@@ -1816,9 +1833,10 @@ impl Locator {
     ///
     /// See: <https://playwright.dev/docs/api/class-locator#locator-highlight>
     #[tracing::instrument(level = "debug", skip_all, fields(selector = %self.selector))]
-    pub async fn highlight(&self) -> Result<()> {
+    pub async fn highlight(&self, options: Option<HighlightOptions>) -> Result<()> {
+        let style = options.and_then(|o| o.style);
         self.frame
-            .locator_highlight(&self.selector)
+            .locator_highlight(&self.selector, style.as_deref())
             .await
             .map_err(|e| self.wrap_error_with_selector(e))
     }
@@ -1974,6 +1992,27 @@ mod tests {
         assert_eq!(
             get_by_role_selector(AriaRole::Button, Some(opts)),
             "internal:role=button[name=\"Submit\"i]"
+        );
+    }
+
+    #[test]
+    fn test_get_by_role_selector_with_description() {
+        let opts = GetByRoleOptions {
+            description: Some("Close dialog".to_string()),
+            ..Default::default()
+        };
+        assert_eq!(
+            get_by_role_selector(AriaRole::Button, Some(opts)),
+            "internal:role=button[description=\"Close dialog\"i]"
+        );
+        let exact = GetByRoleOptions {
+            description: Some("Close".to_string()),
+            exact: Some(true),
+            ..Default::default()
+        };
+        assert_eq!(
+            get_by_role_selector(AriaRole::Button, Some(exact)),
+            "internal:role=button[description=\"Close\"s]"
         );
     }
 

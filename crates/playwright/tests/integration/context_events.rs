@@ -705,3 +705,42 @@ async fn test_context_on_download() {
     browser.close().await.ok();
     drop(playwright);
 }
+
+#[tokio::test]
+async fn test_context_weberror_location() {
+    let (playwright, browser, context) = crate::common::setup_context().await;
+    let captured: Arc<Mutex<Option<bool>>> = Arc::new(Mutex::new(None));
+    let c = captured.clone();
+    context
+        .on_weberror(move |we| {
+            let c = c.clone();
+            async move {
+                *c.lock().unwrap() = Some(we.location().is_some());
+                Ok(())
+            }
+        })
+        .await
+        .expect("on_weberror");
+
+    let page = context.new_page().await.expect("new page");
+    page.goto("about:blank", None).await.ok();
+    let _ = page
+        .evaluate_value("setTimeout(() => { throw new Error('boom') }, 0)")
+        .await;
+
+    let mut waited = 0u64;
+    while captured.lock().unwrap().is_none() && waited < 5000 {
+        tokio::time::sleep(Duration::from_millis(50)).await;
+        waited += 50;
+    }
+    let had_location = captured.lock().unwrap().take();
+    assert_eq!(
+        had_location,
+        Some(true),
+        "weberror should carry a source location"
+    );
+
+    context.close().await.ok();
+    browser.close().await.ok();
+    drop(playwright);
+}

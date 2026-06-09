@@ -114,7 +114,9 @@ pub use har_options::{HarContent, HarMode, StartHarOptions};
 pub use js_handle::JSHandle;
 pub use keyboard::Keyboard;
 pub use local_utils::LocalUtils;
-pub use locator::{AriaRole, BoundingBox, FilterOptions, GetByRoleOptions, Locator};
+pub use locator::{
+    AriaRole, BoundingBox, FilterOptions, GetByRoleOptions, HighlightOptions, Locator,
+};
 pub use mouse::Mouse;
 pub use page::{
     AddLocatorHandlerOptions, AddScriptTagOptions, AddScriptTagOptionsBuilder, AddStyleTagOptions,
@@ -143,7 +145,7 @@ pub use touchscreen::Touchscreen;
 pub use tracing::{Tracing, TracingStartOptions, TracingStopOptions};
 pub use video::Video;
 pub use wait_for::{WaitForOptions, WaitForOptionsBuilder, WaitForState};
-pub use web_error::WebError;
+pub use web_error::{WebError, WebErrorLocation};
 pub use web_socket::WebSocket;
 pub use web_socket_route::{WebSocketRoute, WebSocketRouteCloseOptions};
 pub use worker::Worker;

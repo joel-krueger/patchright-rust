@@ -1980,6 +1980,9 @@ impl Frame {
             if let Some(depth) = opts.depth {
                 params["depth"] = serde_json::Value::from(depth);
             }
+            if let Some(boxes) = opts.boxes {
+                params["boxes"] = serde_json::Value::Bool(boxes);
+            }
         }
 
         let response: AriaSnapshotResponse = self.channel().send("ariaSnapshot", params).await?;
@@ -2017,15 +2020,16 @@ impl Frame {
     /// This is a visual debugging tool and does not affect test assertions.
     ///
     /// See: <https://playwright.dev/docs/api/class-locator#locator-highlight>
-    pub(crate) async fn locator_highlight(&self, selector: &str) -> Result<()> {
-        self.channel()
-            .send_no_result(
-                "highlight",
-                serde_json::json!({
-                    "selector": selector
-                }),
-            )
-            .await
+    pub(crate) async fn locator_highlight(
+        &self,
+        selector: &str,
+        style: Option<&str>,
+    ) -> Result<()> {
+        let mut params = serde_json::json!({ "selector": selector });
+        if let Some(style) = style {
+            params["style"] = serde_json::Value::String(style.to_string());
+        }
+        self.channel().send_no_result("highlight", params).await
     }
 
     /// Evaluates JavaScript expression in the frame context (without return value).

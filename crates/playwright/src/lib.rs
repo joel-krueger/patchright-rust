@@ -302,7 +302,7 @@ pub use protocol::{Request, ResourceTiming};
 // Re-export Locator and element APIs
 pub use protocol::{
     AriaRole, AriaSnapshotMode, AriaSnapshotOptions, BoundingBox, ElementHandle, FilterOptions,
-    GetByRoleOptions, JSHandle, Locator,
+    GetByRoleOptions, HighlightOptions, JSHandle, Locator,
 };
 
 // Re-export navigation and page options
@@ -355,7 +355,7 @@ pub use protocol::{ConsoleMessage, ConsoleMessageLocation};
 pub use protocol::{DeviceDescriptor, DeviceViewport};
 
 // Re-export WebError
-pub use protocol::WebError;
+pub use protocol::{WebError, WebErrorLocation};
 
 // Re-export WebSocketRoute
 pub use protocol::{WebSocketRoute, WebSocketRouteCloseOptions};

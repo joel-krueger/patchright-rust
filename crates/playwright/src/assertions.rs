@@ -840,10 +840,31 @@ impl Expectation {
     ///
     /// See: <https://playwright.dev/docs/api/class-locatorassertions#locator-assertions-to-have-css>
     pub async fn to_have_css(self, name: &str, value: &str) -> Result<()> {
+        self.to_have_css_inner(name, value, None).await
+    }
+
+    /// Asserts the computed CSS of a **pseudo-element** (e.g. `"::before"`,
+    /// `"::after"`) matches `value`. Otherwise like
+    /// [`to_have_css`](Self::to_have_css).
+    ///
+    /// See: <https://playwright.dev/docs/api/class-locatorassertions#locator-assertions-to-have-css>
+    pub async fn to_have_css_pseudo(self, name: &str, value: &str, pseudo: &str) -> Result<()> {
+        self.to_have_css_inner(name, value, Some(pseudo)).await
+    }
+
+    async fn to_have_css_inner(self, name: &str, value: &str, pseudo: Option<&str>) -> Result<()> {
         let start = std::time::Instant::now();
         let selector = self.locator.selector().to_string();
+        let getter = match pseudo {
+            Some(p) => format!(
+                "getComputedStyle(el, {})",
+                serde_json::to_string(p).unwrap()
+            ),
+            None => "getComputedStyle(el)".to_string(),
+        };
         let expr = format!(
-            "(el) => getComputedStyle(el).getPropertyValue({})",
+            "(el) => {}.getPropertyValue({})",
+            getter,
             serde_json::to_string(name).unwrap()
         );
 

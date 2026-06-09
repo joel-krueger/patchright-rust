@@ -1945,7 +1945,7 @@ async fn test_locator_highlight() {
 
     page.locator("h1")
         .await
-        .highlight()
+        .highlight(None)
         .await
         .expect("highlight should succeed");
 

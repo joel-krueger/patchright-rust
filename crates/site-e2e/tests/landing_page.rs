@@ -21,8 +21,8 @@ use std::path::{Path, PathBuf};
 
 use axum::Router;
 use playwright_rs::protocol::{
-    Animations, Page, Playwright, ScreenshotOptions, StartHarOptions, TracingStartOptions,
-    TracingStopOptions,
+    Animations, AriaSnapshotOptions, Page, Playwright, ScreenshotOptions, StartHarOptions,
+    TracingStartOptions, TracingStopOptions,
 };
 use playwright_rs::{expect, expect_page};
 use tower_http::services::ServeDir;
@@ -138,8 +138,15 @@ async fn landing_page_works_as_advertised() {
         )
         .await
         .expect("the page's accessibility landmarks are present");
-    // Publish the full accessibility tree as a downloadable receipt.
-    let aria_tree = page.aria_snapshot(None).await.expect("aria snapshot");
+    // Publish the full accessibility tree as a downloadable receipt, with each
+    // element's bounding box appended (the 1.60 `boxes` option).
+    let aria_tree = page
+        .aria_snapshot(Some(AriaSnapshotOptions {
+            boxes: Some(true),
+            ..Default::default()
+        }))
+        .await
+        .expect("aria snapshot");
     std::fs::write(receipts.join("aria-snapshot.txt"), aria_tree).expect("write aria receipt");
     shot(&page, &steps, "01.png", "#hero").await;
 
