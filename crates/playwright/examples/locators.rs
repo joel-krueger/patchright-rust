@@ -4,6 +4,7 @@
 // element evaluation, bulk text retrieval, bounding boxes
 
 use playwright_rs::Playwright;
+use playwright_rs::protocol::{DropOptions, FilePayload};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -158,6 +159,43 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?
         .unwrap_or_default();
     println!("Drag result: {}", result);
+
+    // --- drop() - external drag-and-drop of files/data onto an element ---
+    // Unlike drag_to (intra-page), drop simulates dragging a file in from
+    // outside the browser, e.g. onto an upload zone.
+
+    page.set_content(
+        r#"<div id="zone" style="width:120px;height:120px;background:gray">Drop files</div>
+           <div id="dropped"></div>
+           <script>
+             const zone = document.getElementById('zone');
+             zone.addEventListener('dragover', e => e.preventDefault());
+             zone.addEventListener('drop', e => {
+               e.preventDefault();
+               const names = [...e.dataTransfer.files].map(f => f.name).join(',');
+               document.getElementById('dropped').textContent = 'files: ' + names;
+             });
+           </script>"#,
+        None,
+    )
+    .await?;
+
+    let upload = FilePayload::builder()
+        .name("report.csv".to_string())
+        .mime_type("text/csv".to_string())
+        .buffer(b"a,b,c\n1,2,3\n".to_vec())
+        .build();
+    page.locator("#zone")
+        .await
+        .drop(DropOptions::builder().file(upload).build())
+        .await?;
+    let dropped: String = page
+        .locator("#dropped")
+        .await
+        .text_content()
+        .await?
+        .unwrap_or_default();
+    println!("Drop result: {}", dropped);
 
     // --- page property - navigate from locator back to its page ---
 
