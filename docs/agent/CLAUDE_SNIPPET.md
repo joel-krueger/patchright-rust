@@ -52,6 +52,13 @@ overlay.
   playwright-python / java / .NET semantics. When in doubt, the
   [upstream Playwright docs](https://playwright.dev/docs/api) are
   authoritative.
+- **Newer surface worth knowing (options on docs.rs):** stable/redacted
+  screenshots (`animations(Disabled)`, `mask`); context-level events
+  (`BrowserContext::on_download` / `on_page_load` / `on_frame_*`,
+  `Browser::on_context`) for multi-tab fixtures; HAR capture
+  (`tracing().start_har` / `stop_har`, replayable via `route_from_har`);
+  external file drop (`Locator::drop`, vs intra-page `drag_to`);
+  ARIA-tree assertions (`expect_page(..).to_match_aria_snapshot`).
 
 ### Debugging failures
 
