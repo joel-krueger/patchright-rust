@@ -19,15 +19,13 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::ProxySettings;
 ///
-/// let proxy = ProxySettings {
-///     server: "http://proxy.example.com:8080".to_string(),
-///     bypass: Some(".example.com, chromium.org".to_string()),
-///     username: Some("user".to_string()),
-///     password: Some("secret".to_string()),
-/// };
+/// let proxy = ProxySettings::new("http://proxy.example.com:8080")
+///     .bypass(".example.com, chromium.org")
+///     .username("user")
+///     .password("secret");
 /// ```
 ///
 /// See: <https://playwright.dev/docs/api/class-browser#browser-new-context>

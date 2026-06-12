@@ -15,7 +15,7 @@
 //!
 //! # Example
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::protocol::{Playwright, TracingStartOptions};
 //!
 //! #[tokio::main]
@@ -24,7 +24,7 @@
 //!     let browser = playwright.chromium().launch().await?;
 //!     let context = browser.new_context().await?;
 //!
-//!     let tracing = context.tracing()?;
+//!     let tracing = context.tracing().await?;
 //!
 //!     // Start tracing with options
 //!     tracing.start(Some(TracingStartOptions::default()

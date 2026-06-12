@@ -12,7 +12,7 @@ use crate::protocol::click::Position;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::{DragToOptions, Position};
 ///
 /// // Drag with custom source and target positions

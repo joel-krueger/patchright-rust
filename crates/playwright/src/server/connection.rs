@@ -69,10 +69,16 @@ pub trait ConnectionLike: Send + Sync {
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
+/// # use std::sync::Arc;
+/// # use playwright_rs::protocol::Page;
+/// # use playwright_rs::server::connection::ConnectionLike;
 /// use playwright_rs::server::connection::ConnectionExt;
 ///
+/// # async fn example(connection: Arc<dyn ConnectionLike>, guid: String) -> playwright_rs::Result<()> {
 /// let page: Page = connection.get_typed::<Page>(&guid).await?;
+/// # Ok(())
+/// # }
 /// ```
 #[async_trait::async_trait]
 pub trait ConnectionExt: ConnectionLike {
@@ -101,8 +107,14 @@ impl<C: ConnectionLike + ?Sized> ConnectionExt for C {}
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
+/// # use std::sync::Arc;
+/// # use playwright_rs::protocol::Page;
+/// # use playwright_rs::server::channel_owner::ChannelOwner;
+/// # use playwright_rs::server::connection::downcast_parent;
+/// # fn example(dialog_arc: Arc<dyn ChannelOwner>) {
 /// let page: Option<Page> = downcast_parent::<Page>(&*dialog_arc);
+/// # }
 /// ```
 pub fn downcast_parent<T: ChannelOwner + Clone + 'static>(obj: &dyn ChannelOwner) -> Option<T> {
     obj.parent()

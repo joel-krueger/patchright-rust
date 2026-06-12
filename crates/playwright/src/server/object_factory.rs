@@ -46,7 +46,7 @@ use std::sync::Arc;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// # use playwright_rs::server::object_factory::create_object;
 /// # use playwright_rs::server::channel_owner::ParentOrConnection;
 /// # use playwright_rs::server::connection::ConnectionLike;

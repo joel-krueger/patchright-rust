@@ -8,7 +8,7 @@
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::SelectOption;
 ///
 /// // Select by value

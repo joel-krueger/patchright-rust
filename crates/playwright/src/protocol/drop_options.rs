@@ -17,7 +17,7 @@ use crate::protocol::click::Position;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::{DropOptions, FilePayload, Position};
 ///
 /// // Drop an in-memory file onto a drop zone

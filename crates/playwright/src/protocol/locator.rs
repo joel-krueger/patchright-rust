@@ -17,7 +17,7 @@
 //!
 //! # Example
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::Playwright;
 //!
 //! #[tokio::main]
@@ -570,7 +570,7 @@ impl FilterOptions {
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::{Playwright, SelectOption};
 ///
 /// #[tokio::main]
@@ -723,7 +723,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// # use playwright_rs::Playwright;
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -876,7 +876,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::{Playwright, FilterOptions};
     ///
     /// # #[tokio::main]
@@ -928,7 +928,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::Playwright;
     ///
     /// # #[tokio::main]
@@ -963,7 +963,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::Playwright;
     ///
     /// # #[tokio::main]
@@ -1718,7 +1718,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::Playwright;
     ///
     /// # #[tokio::main]
@@ -1781,7 +1781,7 @@ impl Locator {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::Playwright;
     ///
     /// # #[tokio::main]

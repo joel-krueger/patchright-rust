@@ -13,7 +13,7 @@ use crate::protocol::click::{KeyboardModifier, Position};
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::TapOptions;
 ///
 /// // Tap with force (bypass actionability checks)

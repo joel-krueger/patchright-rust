@@ -41,8 +41,9 @@ their domain:
 - **supply-chain** — `cargo audit` / `cargo deny` / `cargo vet`
   workflow. Read before bumping our own version, before resolving a
   dependabot PR's vet failures, or when a `RUSTSEC-*` advisory drops.
-- **doctest-conventions** — module-level doctests with `ignore`
-  annotation. Read before authoring or modifying rustdoc examples.
+- **doctest-conventions** — `no_run` doctests with hidden scaffolding;
+  compile-checked everywhere. Read before authoring or modifying
+  rustdoc examples.
 - **release-process** — end-to-end release runbook including the
   push-commit-then-wait-for-CI-then-tag pattern. Read before driving
   a release manually.
@@ -124,9 +125,8 @@ cargo nextest run                           # all tests
 cargo nextest run -p playwright-rs --lib    # unit tests only (~2s, no browsers)
 cargo nextest run -p playwright-rs -E 'test(locator)'
 
-# Doctests (nextest does not run these)
-cargo test --doc                            # compile-only (pre-commit)
-cargo test --doc --workspace -- --ignored   # full execution (CI)
+# Doctests (nextest does not run these; no_run = compile-only by design)
+cargo test --doc --workspace                # pre-commit and CI run exactly this
 
 # Examples
 cargo run --package playwright-rs --example basic

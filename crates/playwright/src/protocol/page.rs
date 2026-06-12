@@ -30,7 +30,7 @@ use tracing::Instrument;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::{
 ///     Playwright, ScreenshotOptions, ScreenshotType, AddStyleTagOptions, AddScriptTagOptions,
 ///     EmulateMediaOptions, Media, ColorScheme, Viewport,
@@ -657,12 +657,19 @@ impl Page {
     ///
     /// To get a filtered subset, chain a standard iterator filter:
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// let errors: Vec<_> = page
     ///     .console_messages()
     ///     .into_iter()
-    ///     .filter(|m| m.message_type() == "error")
+    ///     .filter(|m| m.type_() == "error")
     ///     .collect();
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// Use [`clear_console_messages`](Self::clear_console_messages) to drop
@@ -690,12 +697,19 @@ impl Page {
     ///
     /// To get a filtered subset, chain a standard iterator filter:
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// let typeerrors: Vec<_> = page
     ///     .page_errors()
     ///     .into_iter()
     ///     .filter(|e| e.starts_with("TypeError"))
     ///     .collect();
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// Use [`clear_page_errors`](Self::clear_page_errors) to drop the
@@ -2116,10 +2130,17 @@ impl Page {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// page.on_filechooser(|chooser| async move {
     ///     chooser.set_files(&[std::path::PathBuf::from("/tmp/file.txt")]).await
     /// }).await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-event-file-chooser>
@@ -2167,12 +2188,20 @@ impl Page {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # use std::path::PathBuf;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// // Set up waiter BEFORE triggering the file chooser
     /// let waiter = page.expect_file_chooser(None).await?;
     /// page.locator("input[type=file]").await.click(None).await?;
     /// let chooser = waiter.wait().await?;
     /// chooser.set_files(&[PathBuf::from("/tmp/file.txt")]).await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-wait-for-event>
@@ -3522,7 +3551,7 @@ impl Page {
     /// # Example
     ///
     /// ```no_run
-    /// # use playwright_rs::protocol::{Playwright, AddStyleTagOptions};
+    /// # use playwright_rs::protocol::Playwright;
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # let playwright = Playwright::launch().await?;
@@ -4027,7 +4056,7 @@ impl Page {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// # use playwright_rs::protocol::{Playwright, BrowserContextOptions, Viewport};
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {

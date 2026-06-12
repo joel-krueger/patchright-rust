@@ -32,7 +32,7 @@ pub enum WaitForState {
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::{WaitForOptions, WaitForState};
 ///
 /// // Wait until the element is visible

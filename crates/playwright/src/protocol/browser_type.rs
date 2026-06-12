@@ -33,7 +33,7 @@ use tracing::Instrument;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// # use playwright_rs::protocol::Playwright;
 /// # use playwright_rs::api::LaunchOptions;
 /// # use playwright_rs::protocol::BrowserContextOptions;

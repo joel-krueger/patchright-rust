@@ -35,7 +35,7 @@ use tokio::sync::oneshot;
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::Playwright;
 ///
 /// #[tokio::main]
@@ -743,24 +743,26 @@ impl BrowserContext {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let context = browser.new_context().await?;
     /// use playwright_rs::protocol::{Cookie, StorageState};
     ///
     /// // Restore session cookie
-    /// let state = StorageState {
-    ///     cookies: vec![Cookie {
-    ///         name: "session".to_string(),
-    ///         value: "token123".to_string(),
-    ///         domain: "example.com".to_string(),
-    ///         path: "/".to_string(),
-    ///         expires: -1.0,
-    ///         http_only: true,
-    ///         secure: true,
-    ///         same_site: Some("Lax".to_string()),
-    ///     }],
-    ///     origins: vec![],
-    /// };
+    /// let state = StorageState::default().cookies(vec![
+    ///     Cookie::new("session", "token123")
+    ///         .domain("example.com")
+    ///         .path("/")
+    ///         .http_only(true)
+    ///         .secure(true)
+    ///         .same_site("Lax"),
+    /// ]);
     /// context.set_storage_state(state).await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-browsercontext#browser-context-set-storage-state>
@@ -1872,11 +1874,18 @@ impl BrowserContext {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let context = browser.new_context().await?;
     /// // Set up the waiter BEFORE the triggering action
     /// let waiter = context.expect_page(None).await?;
     /// let _page = context.new_page().await?;
     /// let new_page = waiter.wait().await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-browsercontext#browser-context-wait-for-event>
@@ -1903,11 +1912,18 @@ impl BrowserContext {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::Playwright;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let context = browser.new_context().await?;
     /// // Set up the waiter BEFORE closing
     /// let waiter = context.expect_close(None).await?;
     /// context.close().await?;
     /// waiter.wait().await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-browsercontext#browser-context-wait-for-event>
@@ -3578,16 +3594,16 @@ impl BrowserContextOptionsBuilder {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use playwright_rs::protocol::{BrowserContextOptions, ProxySettings};
     ///
     /// let options = BrowserContextOptions::builder()
-    ///     .proxy(ProxySettings {
-    ///         server: "http://proxy.example.com:8080".to_string(),
-    ///         bypass: Some(".example.com".to_string()),
-    ///         username: Some("user".to_string()),
-    ///         password: Some("pass".to_string()),
-    ///     })
+    ///     .proxy(
+    ///         ProxySettings::new("http://proxy.example.com:8080")
+    ///             .bypass(".example.com")
+    ///             .username("user")
+    ///             .password("pass"),
+    ///     )
     ///     .build();
     /// ```
     ///

@@ -13,7 +13,7 @@
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::{EventValue, Playwright};
 ///
 /// #[tokio::main]

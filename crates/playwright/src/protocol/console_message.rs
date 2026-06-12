@@ -125,7 +125,7 @@ impl ConsoleMessage {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// # use playwright_rs::protocol::Playwright;
     /// # use std::time::Duration;
     /// # use std::sync::{Arc, Mutex};

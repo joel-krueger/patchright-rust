@@ -28,7 +28,7 @@
 //!
 //! # Example
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::{Playwright, ScreencastStartOptions};
 //!
 //! #[tokio::main]

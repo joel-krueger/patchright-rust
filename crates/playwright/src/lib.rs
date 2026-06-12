@@ -73,7 +73,7 @@
 //!
 //! ## Basic Navigation and Interaction
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::{Playwright, SelectOption};
 //!
 //! #[tokio::main]
@@ -109,7 +109,7 @@
 //!
 //! ## Form Interaction
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::{Playwright, SelectOption};
 //!
 //! #[tokio::main]
@@ -154,7 +154,7 @@
 //!
 //! ## Element Screenshots
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::Playwright;
 //!
 //! #[tokio::main]
@@ -183,7 +183,7 @@
 //!
 //! ## Assertions (expect API)
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::{expect, Playwright};
 //!
 //! #[tokio::main]
@@ -237,7 +237,7 @@
 //! values, eval expressions, request/response bodies — are deliberately
 //! excluded from span fields.
 //!
-//! ```ignore
+//! ```no_run
 //! use tracing_subscriber::EnvFilter;
 //!
 //! tracing_subscriber::fmt()

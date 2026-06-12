@@ -22,7 +22,7 @@ const DEFAULT_POLL_INTERVAL: Duration = Duration::from_millis(100);
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::{expect, protocol::Playwright};
 /// use std::time::Duration;
 ///
@@ -978,12 +978,19 @@ impl Expectation {
     /// The `expected` string is a YAML representation of the accessibility tree.
     /// The Playwright server handles auto-retrying within the assertion timeout.
     ///
-    /// # Example (in module-level doctest)
+    /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::{Playwright, expect};
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// expect(page.locator("body").await)
     ///     .to_match_aria_snapshot("- heading \"Hello\" [level=1]\n- button \"Click me\"")
     ///     .await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-locatorassertions#locator-assertions-to-match-aria-snapshot>
@@ -1322,12 +1329,19 @@ impl PageExpectation {
     /// the accessibility tree, and the Playwright server auto-retries within the
     /// assertion timeout.
     ///
-    /// # Example (in module-level doctest)
+    /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
+    /// # use playwright_rs::{Playwright, expect_page};
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let pw = Playwright::launch().await?;
+    /// # let browser = pw.chromium().launch().await?;
+    /// # let page = browser.new_page().await?;
     /// expect_page(&page)
     ///     .to_match_aria_snapshot("- heading \"Welcome\" [level=1]")
     ///     .await?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// See: <https://playwright.dev/docs/api/class-pageassertions#page-assertions-to-match-aria-snapshot>

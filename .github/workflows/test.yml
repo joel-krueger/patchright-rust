@@ -123,8 +123,8 @@ jobs:
       timeout-minutes: 30
       run: cargo nextest run --workspace --profile ci --run-ignored ignored-only --test-threads=1
 
-    - name: Run doc-tests (ignored tests require browsers)
-      run: cargo test --doc --workspace -- --ignored
+    - name: Compile doc-tests (no_run; browser doctests are compile-only)
+      run: cargo test --doc --workspace
 
     - name: Build all examples
       run: cargo build --package playwright-rs --examples

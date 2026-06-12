@@ -11,7 +11,7 @@
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// # use playwright_rs::protocol::FilePayload;
 /// let file = FilePayload::new("document.pdf", "application/pdf", vec![/* PDF bytes */]);
 /// ```

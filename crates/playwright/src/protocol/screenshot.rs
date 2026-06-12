@@ -24,7 +24,7 @@ pub enum Animations {
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::ScreenshotType;
 ///
 /// let screenshot_type = ScreenshotType::Jpeg;
@@ -71,7 +71,7 @@ pub enum Scale {
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::ScreenshotClip;
 ///
 /// let clip = ScreenshotClip {
@@ -101,7 +101,7 @@ pub struct ScreenshotClip {
 ///
 /// # Example
 ///
-/// ```ignore
+/// ```no_run
 /// use playwright_rs::protocol::{ScreenshotOptions, ScreenshotType, ScreenshotClip};
 /// use playwright_rs::Animations;
 ///

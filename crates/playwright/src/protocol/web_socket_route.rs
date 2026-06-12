@@ -6,7 +6,7 @@
 //!
 //! # Example
 //!
-//! ```ignore
+//! ```no_run
 //! use playwright_rs::protocol::Playwright;
 //!
 //! #[tokio::main]

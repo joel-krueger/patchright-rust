@@ -211,7 +211,7 @@ impl Frame {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// # use playwright_rs::protocol::Playwright;
     /// # #[tokio::main]
     /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -2123,7 +2123,7 @@ impl Frame {
     ///
     /// # Example
     ///
-    /// ```ignore
+    /// ```no_run
     /// use serde_json::json;
     /// use playwright_rs::protocol::Playwright;
     ///
