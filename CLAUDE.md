@@ -113,7 +113,9 @@ Just-in-time philosophy — write the right thing in the right file:
   server lifecycle (in `crates/playwright/src/`)
 - **Integration tests** — end-to-end API exercising real browsers
   (`crates/playwright/tests/integration/`); use `common::setup()` /
-  `common::setup_context()` helpers
+  `common::setup_context()` helpers. To wait for an event/state change,
+  use `common::poll_until(timeout, cond)` — never a fixed
+  `tokio::time::sleep` before an assertion (flakes on loaded CI)
 - **Doctests** — see the **doctest-conventions** skill
 - **CI** runs Linux, macOS, Windows with Chromium + Firefox + WebKit
 
