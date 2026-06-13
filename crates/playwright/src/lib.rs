@@ -342,6 +342,14 @@ pub use protocol::{
     StorageState, Viewport,
 };
 
+// Re-export the tracing + HAR API. These were the last consumer-facing
+// cohort still reachable only via `playwright_rs::protocol::*`; bringing
+// them to the crate root matches every other type a consumer constructs
+// (the `protocol::` paths still work).
+pub use protocol::{
+    HarContent, HarMode, StartHarOptions, Tracing, TracingStartOptions, TracingStopOptions,
+};
+
 // Re-export EventWaiter for use with expect_page() / expect_close()
 pub use protocol::EventWaiter;
 

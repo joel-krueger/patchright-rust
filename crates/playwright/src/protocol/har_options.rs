@@ -40,7 +40,7 @@ pub enum HarMode {
 /// # Example
 ///
 /// ```
-/// use playwright_rs::protocol::{StartHarOptions, HarContent, HarMode};
+/// use playwright_rs::{StartHarOptions, HarContent, HarMode};
 ///
 /// let opts = StartHarOptions::default()
 ///     .content(HarContent::Attach)
