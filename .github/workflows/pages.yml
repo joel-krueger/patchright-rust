@@ -123,7 +123,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
             git fetch origin gh-pages
-            git worktree add gh origin/gh-pages
+            # -B puts the worktree on a local gh-pages branch (not detached HEAD)
+            # reset to the remote, so the commit/push below has a ref to push.
+            git worktree add -B gh-pages gh origin/gh-pages
           else
             # First run: create the branch off HEAD, then clear inherited files
             # so gh-pages holds only deployed site content.
@@ -149,5 +151,5 @@ jobs:
             echo "No changes to publish."
           else
             git commit -m "Deploy ${{ steps.target.outputs.dest }} (${{ github.sha }})"
-            git push origin gh-pages
+            git push origin HEAD:gh-pages
           fi
