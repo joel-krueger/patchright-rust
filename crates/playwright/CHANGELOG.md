@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **`APIResponse::security_details()` and `APIResponse::server_addr()`** (Playwright 1.61.0) — mirror the browser-side `Response` accessors on API responses, returning the TLS certificate details and resolved remote IP/port when the server provides them (HTTPS / when available). New parity surface; reuses the existing `SecurityDetails` / `RemoteAddr` types.
+- **`ConnectOverCdpOptions::artifacts_dir`** (Playwright 1.61.0) — set the directory where traces and downloads captured over a CDP connection are stored, via `BrowserType::connect_over_cdp`.
 
 ### Changed
 
