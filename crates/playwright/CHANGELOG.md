@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`APIResponse::security_details()` and `APIResponse::server_addr()`** (Playwright 1.61.0) — mirror the browser-side `Response` accessors on API responses, returning the TLS certificate details and resolved remote IP/port when the server provides them (HTTPS / when available). New parity surface; reuses the existing `SecurityDetails` / `RemoteAddr` types.
+
 ### Changed
 
 - **Bundled Playwright driver bumped to 1.61.0** (from 1.60.0). New server surface includes WebAuthn virtual-authenticator credentials, a `WebStorage` API (`page.localStorage`/`sessionStorage`), `apiResponse.securityDetails()`/`serverAddr()`, and Ubuntu 26.04 support. Browser builds: Chromium 149, Firefox 151, WebKit 26.5. Install matching browsers with `npx playwright@1.61.0 install`.
