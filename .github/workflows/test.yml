@@ -139,3 +139,6 @@ jobs:
 
     - name: Verify landing-page code snippets
       run: cargo xtask verify-site-snippets
+
+    - name: Verify bundled driver version references
+      run: cargo xtask verify-driver-version
