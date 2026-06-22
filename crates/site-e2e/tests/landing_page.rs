@@ -18,11 +18,13 @@
 
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use axum::Router;
 use playwright_rs::protocol::{
-    Animations, AriaSnapshotOptions, Page, Playwright, ScreenshotOptions, StartHarOptions,
-    TracingStartOptions, TracingStopOptions,
+    ActionCursor, Animations, AriaSnapshotOptions, Page, Playwright, ScreencastStartOptions,
+    ScreenshotOptions, ShowActionsOptions, StartHarOptions, TracingStartOptions,
+    TracingStopOptions,
 };
 use playwright_rs::{expect, expect_page};
 use tower_http::services::ServeDir;
@@ -342,6 +344,121 @@ async fn version_switcher_lists_versions_and_warns_on_dev() {
         .to_be_visible()
         .await
         .expect("dev build shows the unreleased banner");
+
+    browser.close().await.ok();
+    server.abort();
+}
+
+/// The dev (main HEAD) build advertises unreleased features in the
+/// "coming next" section; release snapshots omit it. The dogfood build is
+/// SITE_VERSION=dev, so the section + its cards must render and show real
+/// snippets — proving the /dev channel showcases what's coming.
+#[tokio::test]
+async fn dev_build_shows_unreleased_features() {
+    let dist = dist_dir();
+    if !dist.join("index.html").exists() {
+        eprintln!("skipping dev-features test: {} not built.", dist.display());
+        return;
+    }
+
+    let (addr, server) = serve(&dist).await;
+    let pw = Playwright::launch().await.expect("launch playwright");
+    let browser = pw.chromium().launch().await.expect("launch chromium");
+    let page = browser.new_page().await.expect("new page");
+    page.goto(&format!("http://{addr}"), None)
+        .await
+        .expect("navigate");
+
+    // The dev build adds unreleased feature cards into the Features grid, each
+    // carrying an "Unreleased" badge and a real (compile-checked) snippet.
+    let webstorage = page.locator("#feature-webstorage").await;
+    expect(webstorage.clone())
+        .to_be_visible()
+        .await
+        .expect("WebStorage card renders on the dev build");
+    expect(webstorage.clone())
+        .to_contain_text("UNRELEASED")
+        .await
+        .expect("WebStorage card carries the Unreleased badge");
+    expect(webstorage)
+        .to_contain_text("local_storage")
+        .await
+        .expect("WebStorage card shows the local_storage snippet");
+
+    let webauthn = page.locator("#feature-webauthn").await;
+    expect(webauthn.clone())
+        .to_be_visible()
+        .await
+        .expect("WebAuthn card renders on the dev build");
+    expect(webauthn)
+        .to_contain_text("UNRELEASED")
+        .await
+        .expect("WebAuthn card carries the Unreleased badge");
+
+    // The dev build's hero badges reflect unreleased reality: crates.io shows
+    // "unreleased" (not the published version) and the Playwright badge tracks
+    // the newer bundled driver. Match on alt text (robust to the external
+    // shields image not loading in CI).
+    let crates_badge = page
+        .locator("#hero-badges img[alt='crates.io: unreleased']")
+        .await
+        .count()
+        .await
+        .expect("count crates.io badge");
+    assert_eq!(
+        crates_badge, 1,
+        "dev build shows the unreleased crates.io badge"
+    );
+    let pw_badge = page
+        .locator("#hero-badges img[alt='Playwright 1.61.0']")
+        .await
+        .count()
+        .await
+        .expect("count Playwright badge");
+    assert_eq!(pw_badge, 1, "dev build shows the 1.61.0 Playwright badge");
+
+    // Dogfood the unreleased screencast API: record the page with cursor
+    // decoration and save a frame as the DogfoodBanner's dev-only receipt.
+    let receipts = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../site/public/receipts");
+    std::fs::create_dir_all(&receipts).expect("create receipts dir");
+
+    let latest_frame: Arc<Mutex<Option<Vec<u8>>>> = Arc::new(Mutex::new(None));
+    let sink = latest_frame.clone();
+    let screencast = page.screencast();
+    screencast.on_frame(move |frame| {
+        let sink = sink.clone();
+        async move {
+            *sink.lock().unwrap() = Some(frame.data.to_vec());
+            Ok(())
+        }
+    });
+    screencast
+        .start(ScreencastStartOptions::default())
+        .await
+        .expect("start screencast");
+    screencast
+        .show_actions(ShowActionsOptions::default().cursor(ActionCursor::Pointer))
+        .await
+        .expect("show_actions with pointer cursor");
+    // An interaction makes the cursor overlay appear and drives fresh frames.
+    page.locator("#cta-docs")
+        .await
+        .hover(None)
+        .await
+        .expect("hover the docs CTA");
+
+    // Poll for a streamed frame (no fixed pre-assert sleep).
+    let mut captured = None;
+    for _ in 0..60 {
+        if let Some(bytes) = latest_frame.lock().unwrap().clone() {
+            captured = Some(bytes);
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+    }
+    screencast.stop().await.ok();
+    let frame = captured.expect("screencast should stream at least one frame");
+    std::fs::write(receipts.join("screencast.jpeg"), frame).expect("write screencast receipt");
 
     browser.close().await.ok();
     server.abort();
