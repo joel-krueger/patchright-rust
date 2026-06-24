@@ -377,34 +377,32 @@ impl Frame {
     /// In normal usage the main frame always has its page wired up by `Page::main_frame()`.
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-locator>
-    pub fn locator(&self, selector: &str) -> crate::protocol::Locator {
+    pub fn locator(&self, selector: impl Into<String>) -> crate::protocol::Locator {
         let page = self
             .page()
             .expect("Frame::locator() called before set_page(); call page.main_frame() first");
-        crate::protocol::Locator::new(Arc::new(self.clone()), selector.to_string(), page)
+        crate::protocol::Locator::new(Arc::new(self.clone()), selector.into(), page)
     }
 
     /// Returns a locator that matches elements containing the given text.
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-get-by-text>
     pub fn get_by_text(&self, text: &str, exact: bool) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_text_selector(text, exact))
+        self.locator(crate::protocol::locator::get_by_text_selector(text, exact))
     }
 
     /// Returns a locator that matches elements by their associated label text.
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-get-by-label>
     pub fn get_by_label(&self, text: &str, exact: bool) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_label_selector(
-            text, exact,
-        ))
+        self.locator(crate::protocol::locator::get_by_label_selector(text, exact))
     }
 
     /// Returns a locator that matches elements by their placeholder text.
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-get-by-placeholder>
     pub fn get_by_placeholder(&self, text: &str, exact: bool) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_placeholder_selector(
+        self.locator(crate::protocol::locator::get_by_placeholder_selector(
             text, exact,
         ))
     }
@@ -413,7 +411,7 @@ impl Frame {
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-get-by-alt-text>
     pub fn get_by_alt_text(&self, text: &str, exact: bool) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_alt_text_selector(
+        self.locator(crate::protocol::locator::get_by_alt_text_selector(
             text, exact,
         ))
     }
@@ -422,9 +420,7 @@ impl Frame {
     ///
     /// See: <https://playwright.dev/docs/api/class-frame#frame-get-by-title>
     pub fn get_by_title(&self, text: &str, exact: bool) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_title_selector(
-            text, exact,
-        ))
+        self.locator(crate::protocol::locator::get_by_title_selector(text, exact))
     }
 
     /// Returns a locator that matches elements by their test ID attribute.
@@ -436,7 +432,9 @@ impl Frame {
     pub fn get_by_test_id(&self, test_id: &str) -> crate::protocol::Locator {
         use crate::server::channel_owner::ChannelOwner;
         let attr = self.connection().selectors().test_id_attribute();
-        self.locator(&crate::protocol::locator::get_by_test_id_selector_with_attr(test_id, &attr))
+        self.locator(crate::protocol::locator::get_by_test_id_selector_with_attr(
+            test_id, &attr,
+        ))
     }
 
     /// Returns a locator that matches elements by their ARIA role.
@@ -447,7 +445,7 @@ impl Frame {
         role: crate::protocol::locator::AriaRole,
         options: Option<crate::protocol::locator::GetByRoleOptions>,
     ) -> crate::protocol::Locator {
-        self.locator(&crate::protocol::locator::get_by_role_selector(
+        self.locator(crate::protocol::locator::get_by_role_selector(
             role, options,
         ))
     }

@@ -94,7 +94,7 @@ pub struct ScreencastStartOptions {
     /// current viewport size.
     pub size: Option<ScreencastSize>,
     /// JPEG quality, `0..=100`. Server default is implementation-defined.
-    pub quality: Option<i32>,
+    pub quality: Option<u8>,
     /// When set, the screencast is also recorded to a file at this
     /// path. The file is written on [`Screencast::stop`]. The recording
     /// covers only the active start/stop window — for a continuous
@@ -110,8 +110,8 @@ impl ScreencastStartOptions {
         self.size = Some(size);
         self
     }
-    /// Video quality (codec-specific).
-    pub fn quality(mut self, quality: i32) -> Self {
+    /// JPEG quality, `0..=100`.
+    pub fn quality(mut self, quality: u8) -> Self {
         self.quality = Some(quality);
         self
     }
@@ -125,8 +125,8 @@ impl ScreencastStartOptions {
 /// Pixel dimensions for a screencast frame.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ScreencastSize {
-    pub width: i32,
-    pub height: i32,
+    pub width: u32,
+    pub height: u32,
 }
 
 /// Position for the action-label overlay.
@@ -343,7 +343,21 @@ impl Screencast {
 
 #[cfg(test)]
 mod options_tests {
-    use super::{ActionCursor, ActionPosition, ShowActionsOptions};
+    use super::{
+        ActionCursor, ActionPosition, ScreencastSize, ScreencastStartOptions, ShowActionsOptions,
+    };
+
+    #[test]
+    fn start_builder_sets_quality_and_size() {
+        let o = ScreencastStartOptions::default()
+            .quality(80)
+            .size(ScreencastSize {
+                width: 1280,
+                height: 720,
+            });
+        assert_eq!(o.quality, Some(80));
+        assert_eq!(o.size.map(|s| (s.width, s.height)), Some((1280, 720)));
+    }
 
     #[test]
     fn action_cursor_as_str_maps_each_variant() {

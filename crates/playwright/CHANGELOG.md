@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking changes
+
+Public-API type-consistency sweep — within the crate, the same conceptual quantity was typed several different ways. These align the types with each other and with upstream Playwright. All are mechanical call-site migrations.
+
+- **`Mouse::move_to`, `click`, `dblclick`, and `wheel` now take `f64` coordinates instead of `i32`.** Every other pixel-coordinate surface in the crate is already `f64` (`Position`, `BoundingBox`, `Touchscreen::tap`), matching upstream Playwright's floating-point pointer coords; the mouse API was the lone `i32` outlier, which capped precision and forced a lossy `f64 → i32` cast on coordinates derived from `bounding_box()`. To migrate, pass float literals: `mouse.click(150, 200, None)` → `mouse.click(150.0, 200.0, None)`. Integer-typed variables need `as f64`.
+- **`DeviceViewport` and `ScreencastSize` `width`/`height` changed from `i32` to `u32`,** matching `Viewport` (the type used to *set* a context viewport). The three "pixel dimensions" structs now agree, so a `DeviceViewport` read from a device descriptor can be handed to a `Viewport` field without a cast. `BoundingBox` stays `f64` (it is measured geometry, where sub-pixel values are real).
+- **`ScreencastStartOptions::quality` changed from `i32` to `u8`,** matching `ScreenshotOptions::quality`. Both are JPEG quality in `0..=100`; `u8` is range-honest. Migrate by dropping any wider integer type at the call site (e.g. `.quality(80i32)` → `.quality(80)`).
+- **`locator(selector)` now takes `impl Into<String>` instead of `&str`** on `Page`, `Frame`, `Locator`, and `FrameLocator`. A dynamically-built selector can be passed as an owned `String` without a `&format!(...)` borrow at the call site. Existing `&str` and `&String` call sites are unaffected (`&str: Into<String>`); the only break is for code that relied on the method being non-generic (e.g. storing it as a `fn` pointer or using turbofish).
+
 ### Added
 
 - **`APIResponse::security_details()` and `APIResponse::server_addr()`** (Playwright 1.61.0) — mirror the browser-side `Response` accessors on API responses, returning the TLS certificate details and resolved remote IP/port when the server provides them (HTTPS / when available). New parity surface; reuses the existing `SecurityDetails` / `RemoteAddr` types.

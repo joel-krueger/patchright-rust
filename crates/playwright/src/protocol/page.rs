@@ -1054,11 +1054,13 @@ impl Page {
     /// * `selector` - CSS selector or other locating strategy
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-locator>
-    #[tracing::instrument(level = "debug", skip_all, fields(guid = %self.guid(), selector = %selector))]
-    pub async fn locator(&self, selector: &str) -> crate::protocol::Locator {
+    #[tracing::instrument(level = "debug", skip_all, fields(guid = %self.guid(), selector = tracing::field::Empty))]
+    pub async fn locator(&self, selector: impl Into<String>) -> crate::protocol::Locator {
+        let selector = selector.into();
+        tracing::Span::current().record("selector", selector.as_str());
         let frame = self.main_frame_wired();
 
-        crate::protocol::Locator::new(Arc::new(frame), selector.to_string(), self.clone())
+        crate::protocol::Locator::new(Arc::new(frame), selector, self.clone())
     }
 
     /// Creates a [`FrameLocator`](crate::protocol::FrameLocator) for an iframe on this page.
@@ -1254,8 +1256,8 @@ impl Page {
 
     pub(crate) async fn mouse_move(
         &self,
-        x: i32,
-        y: i32,
+        x: f64,
+        y: f64,
         options: Option<crate::protocol::MouseOptions>,
     ) -> Result<()> {
         let mut params = serde_json::json!({
@@ -1277,8 +1279,8 @@ impl Page {
 
     pub(crate) async fn mouse_click(
         &self,
-        x: i32,
-        y: i32,
+        x: f64,
+        y: f64,
         options: Option<crate::protocol::MouseOptions>,
     ) -> Result<()> {
         let mut params = serde_json::json!({
@@ -1300,8 +1302,8 @@ impl Page {
 
     pub(crate) async fn mouse_dblclick(
         &self,
-        x: i32,
-        y: i32,
+        x: f64,
+        y: f64,
         options: Option<crate::protocol::MouseOptions>,
     ) -> Result<()> {
         let mut params = serde_json::json!({
@@ -1358,7 +1360,7 @@ impl Page {
         self.channel().send_no_result("mouseUp", params).await
     }
 
-    pub(crate) async fn mouse_wheel(&self, delta_x: i32, delta_y: i32) -> Result<()> {
+    pub(crate) async fn mouse_wheel(&self, delta_x: f64, delta_y: f64) -> Result<()> {
         self.channel()
             .send_no_result(
                 "mouseWheel",
