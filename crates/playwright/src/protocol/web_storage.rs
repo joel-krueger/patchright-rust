@@ -1,4 +1,4 @@
-//! WebStorage — per-origin `localStorage` / `sessionStorage` access (Playwright 1.61.0).
+//! WebStorage: per-origin `localStorage` / `sessionStorage` access.
 //!
 //! Obtained via [`Page::local_storage`](crate::protocol::Page::local_storage) /
 //! [`Page::session_storage`](crate::protocol::Page::session_storage). Reads and

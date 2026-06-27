@@ -22,7 +22,7 @@ pub struct ConnectOverCdpOptions {
     /// without disturbing state" workflows.
     pub no_defaults: Option<bool>,
     /// Directory where traces and downloads captured over this CDP connection
-    /// are stored. New in Playwright 1.61.0.
+    /// are stored.
     pub artifacts_dir: Option<String>,
 }
 
@@ -39,7 +39,7 @@ impl ConnectOverCdpOptions {
     }
 
     /// Set the directory for traces and downloads captured over this CDP
-    /// connection (Playwright 1.61.0+).
+    /// connection.
     pub fn artifacts_dir(mut self, artifacts_dir: impl Into<String>) -> Self {
         self.artifacts_dir = Some(artifacts_dir.into());
         self

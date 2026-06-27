@@ -81,7 +81,7 @@ use std::path::PathBuf;
 pub struct ScreencastFrame {
     /// JPEG-encoded frame bytes.
     pub data: bytes::Bytes,
-    /// Frame presentation timestamp in seconds (Playwright 1.61.0+).
+    /// Frame presentation timestamp in seconds.
     /// `None` if the driver did not supply one.
     pub timestamp: Option<f64>,
 }
@@ -183,7 +183,7 @@ pub struct ShowActionsOptions {
     pub position: Option<ActionPosition>,
     /// Label font size, pixels.
     pub font_size: Option<i32>,
-    /// Pointer-cursor decoration at action points (Playwright 1.61.0+).
+    /// Pointer-cursor decoration at action points.
     pub cursor: Option<ActionCursor>,
 }
 
@@ -203,7 +203,7 @@ impl ShowActionsOptions {
         self.font_size = Some(font_size);
         self
     }
-    /// Pointer-cursor decoration at action points (Playwright 1.61.0+).
+    /// Pointer-cursor decoration at action points.
     pub fn cursor(mut self, cursor: ActionCursor) -> Self {
         self.cursor = Some(cursor);
         self

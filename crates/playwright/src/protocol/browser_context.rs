@@ -611,7 +611,7 @@ impl BrowserContext {
         crate::protocol::clock::Clock::new(self.channel().clone())
     }
 
-    /// Manage the context's virtual WebAuthn authenticator (Playwright 1.61.0+):
+    /// Manage the context's virtual WebAuthn authenticator:
     /// install it, then register / list / delete passkeys for
     /// `navigator.credentials` testing.
     ///

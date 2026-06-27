@@ -1,4 +1,4 @@
-//! WebAuthn virtual-authenticator credentials (Playwright 1.61.0).
+//! WebAuthn virtual-authenticator credentials.
 //!
 //! Obtained via [`BrowserContext::credentials`](crate::protocol::BrowserContext::credentials).
 //! Install a virtual authenticator, then register / list / delete passkeys

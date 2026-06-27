@@ -4139,14 +4139,14 @@ impl Page {
         crate::protocol::Screencast::new(self.clone())
     }
 
-    /// Access the current origin's `localStorage` (Playwright 1.61.0+).
+    /// Access the current origin's `localStorage`.
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-local-storage>
     pub fn local_storage(&self) -> crate::protocol::WebStorage {
         crate::protocol::WebStorage::new(self.clone(), crate::protocol::WebStorageKind::Local)
     }
 
-    /// Access the current origin's `sessionStorage` (Playwright 1.61.0+).
+    /// Access the current origin's `sessionStorage`.
     ///
     /// See: <https://playwright.dev/docs/api/class-page#page-session-storage>
     pub fn session_storage(&self) -> crate::protocol::WebStorage {

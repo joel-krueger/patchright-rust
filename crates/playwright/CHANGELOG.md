@@ -26,7 +26,7 @@ Public-API type-consistency sweep — within the crate, the same conceptual quan
 
 ### Changed
 
-- **Bundled Playwright driver bumped to 1.61.0** (from 1.60.0). New server surface includes WebAuthn virtual-authenticator credentials, a `WebStorage` API (`page.localStorage`/`sessionStorage`), `apiResponse.securityDetails()`/`serverAddr()`, and Ubuntu 26.04 support. Browser builds: Chromium 149, Firefox 151, WebKit 26.5. Install matching browsers with `npx playwright@1.61.0 install`.
+- **Bundled Playwright driver bumped to 1.61.1** (from 1.60.0). New server surface includes WebAuthn virtual-authenticator credentials, a `WebStorage` API (`page.localStorage`/`sessionStorage`), `apiResponse.securityDetails()`/`serverAddr()`, and Ubuntu 26.04 support. Browser builds: Chromium 149, Firefox 151, WebKit 26.5. Install matching browsers with `npx playwright@1.61.1 install`.
 
 ### Fixed
 
