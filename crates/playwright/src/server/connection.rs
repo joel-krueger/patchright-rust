@@ -213,8 +213,10 @@ pub struct ErrorWrapper {
 }
 
 /// Structured `expect` failure details (Playwright 1.61+). Sent alongside an
-/// `error` to distinguish an assertion mismatch/timeout from a genuine protocol
-/// error: a real error (e.g. bad selector) arrives without these details.
+/// `error`. The driver attaches this to *every* `Frame.expect` error, but only
+/// a genuine assertion result populates a field — an infrastructure error (e.g.
+/// the target closing mid-retry) arrives with an empty `{}`, so classification
+/// keys on field content, not the object's presence (see `parse_protocol_error`).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ExpectErrorDetails {

@@ -1,3 +1,4 @@
+use playwright_rs::Error;
 use playwright_rs::protocol::{AriaSnapshotMode, AriaSnapshotOptions};
 use playwright_rs::{expect, expect_page};
 
@@ -51,9 +52,18 @@ async fn test_to_match_aria_snapshot_mismatch_fails() {
         .to_match_aria_snapshot("- heading \"Goodbye\" [level=1]")
         .await;
 
+    // A genuine mismatch must surface as an assertion variant, never as a
+    // generic ProtocolError. The connection layer classifies on the content of
+    // the driver's `errorDetails`; the 1.61 driver attaches that object to
+    // every `expect` error, so an infrastructure failure (empty details) is a
+    // ProtocolError while a real mismatch/timeout populates a field. This pins
+    // the end-to-end wire path the error_parsing unit tests can't reach.
     assert!(
-        result.is_err(),
-        "Mismatched ARIA snapshot should return an error"
+        matches!(
+            result,
+            Err(Error::AssertionFailed(_) | Error::AssertionTimeout(_))
+        ),
+        "Mismatched ARIA snapshot should be an assertion error, got: {result:?}"
     );
 
     browser.close().await.expect("Failed to close browser");

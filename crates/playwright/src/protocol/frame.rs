@@ -2353,8 +2353,8 @@ impl Frame {
         // carrying top-level `errorDetails` (surfaced by the connection layer as
         // `AssertionFailed` / `AssertionTimeout`). The server applies `isNot`
         // itself, so a successful call always means the assertion held. A genuine
-        // error (e.g. a bad selector) arrives without `errorDetails` and
-        // propagates unchanged.
+        // infrastructure error arrives with an empty `errorDetails` and is
+        // classified as a protocol error, propagating unchanged.
         self.channel().send_no_result("expect", params).await
     }
 

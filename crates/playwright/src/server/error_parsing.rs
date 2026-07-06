@@ -34,13 +34,18 @@ pub(crate) fn parse_protocol_error(
     details: Option<ExpectErrorDetails>,
 ) -> Error {
     // Auto-retrying assertions (`Frame.expect`) report a mismatch or timeout via
-    // structured `errorDetails` rather than a plain error. Map those to the
-    // assertion error variants; a real error arrives without details and falls
-    // through to the generic handling below.
-    if let Some(details) = details {
-        let message = details
-            .custom_error_message
-            .unwrap_or_else(|| payload.message.clone());
+    // structured `errorDetails`. The 1.61 driver attaches `errorDetails` to
+    // EVERY error thrown from `expect`, though — including infrastructure
+    // failures such as the target closing mid-retry — for which it is an empty
+    // `{}`. Only a genuine assertion result populates a field, so classify on
+    // content: an empty details object is a real error and falls through to the
+    // generic handling below.
+    if let Some(details) = details
+        && (details.timed_out.is_some()
+            || details.custom_error_message.is_some()
+            || details.received.is_some())
+    {
+        let message = details.custom_error_message.unwrap_or(payload.message);
         return if details.timed_out.unwrap_or(false) {
             Error::AssertionTimeout(message)
         } else {
@@ -86,35 +91,87 @@ mod tests {
         }
     }
 
-    fn details(timed_out: Option<bool>, custom: Option<&str>) -> ExpectErrorDetails {
+    fn details(
+        timed_out: Option<bool>,
+        custom: Option<&str>,
+        received: Option<serde_json::Value>,
+    ) -> ExpectErrorDetails {
         ExpectErrorDetails {
             timed_out,
             custom_error_message: custom.map(str::to_string),
-            received: None,
+            received,
         }
     }
 
     #[test]
     fn expect_details_timed_out_maps_to_assertion_timeout() {
-        let err = parse_protocol_error(payload("timeout"), Some(details(Some(true), Some("nope"))));
+        let err = parse_protocol_error(
+            payload("timeout"),
+            Some(details(Some(true), Some("nope"), None)),
+        );
         assert!(matches!(err, Error::AssertionTimeout(msg) if msg == "nope"));
     }
 
     #[test]
+    fn expect_details_timed_out_alone_maps_to_assertion_timeout() {
+        // A timeout before any intermediate result: `timedOut` set, no custom
+        // message, no `received`. Must still classify as a timeout.
+        let err = parse_protocol_error(payload("timed out"), Some(details(Some(true), None, None)));
+        assert!(matches!(err, Error::AssertionTimeout(msg) if msg == "timed out"));
+    }
+
+    #[test]
     fn expect_details_without_timeout_maps_to_assertion_failed() {
-        let err = parse_protocol_error(payload("base"), Some(details(Some(false), Some("nope"))));
+        let err = parse_protocol_error(
+            payload("base"),
+            Some(details(Some(false), Some("nope"), None)),
+        );
         assert!(matches!(err, Error::AssertionFailed(msg) if msg == "nope"));
     }
 
     #[test]
     fn expect_details_falls_back_to_payload_message_when_no_custom() {
-        let err = parse_protocol_error(payload("base message"), Some(details(None, None)));
+        // A genuine mismatch with no custom message still carries `received`;
+        // the message then falls back to the payload's own text.
+        let err = parse_protocol_error(
+            payload("base message"),
+            Some(details(
+                None,
+                None,
+                Some(serde_json::json!({ "value": "x" })),
+            )),
+        );
         assert!(matches!(err, Error::AssertionFailed(msg) if msg == "base message"));
+    }
+
+    #[test]
+    fn expect_details_with_only_received_maps_to_assertion_failed() {
+        // `received` present but no timeout / custom message → assertion failure,
+        // not a timeout.
+        let err = parse_protocol_error(
+            payload("mismatch"),
+            Some(details(None, None, Some(serde_json::json!({ "value": 1 })))),
+        );
+        assert!(matches!(err, Error::AssertionFailed(_)));
     }
 
     #[test]
     fn no_details_is_a_plain_protocol_error() {
         let err = parse_protocol_error(payload("boom"), None);
+        assert!(matches!(err, Error::ProtocolError(_)));
+    }
+
+    #[test]
+    fn empty_expect_details_is_a_protocol_error_not_an_assertion() {
+        let empty = ExpectErrorDetails {
+            timed_out: None,
+            custom_error_message: None,
+            received: None,
+        };
+        let err = parse_protocol_error(
+            payload("Target page, context or browser has been closed"),
+            Some(empty),
+        );
         assert!(matches!(err, Error::ProtocolError(_)));
     }
 
