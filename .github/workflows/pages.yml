@@ -50,6 +50,14 @@ jobs:
         run: |
           ver="${{ github.event.inputs.version }}"
           if [ -n "$ver" ]; then
+            # Guard the snapshot dir name and manifest sort: the input must be a
+            # bare MAJOR.MINOR.PATCH. A 'v' prefix (natural, since tags are
+            # v-prefixed) would otherwise publish /vv<ver>/ and skew the
+            # latest-release computation in update-manifest.sh.
+            if ! printf '%s' "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::version input must be a bare semver like 0.15.0 (no 'v' prefix), got: '$ver'"
+              exit 1
+            fi
             echo "site_version=$ver" >> "$GITHUB_OUTPUT"
             echo "dest=v$ver" >> "$GITHUB_OUTPUT"
           else
