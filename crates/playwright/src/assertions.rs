@@ -1323,8 +1323,8 @@ impl PageExpectation {
 
     /// Asserts that the page's accessibility tree matches the expected ARIA snapshot.
     ///
-    /// The page-level counterpart of
-    /// [`Expectation::to_match_aria_snapshot`]; it matches the whole document
+    /// The page-level counterpart of the locator assertion
+    /// `to_match_aria_snapshot` (from [`expect`]); it matches the whole document
     /// (rooted at `:root`). The `expected` string is a YAML representation of
     /// the accessibility tree, and the Playwright server auto-retries within the
     /// assertion timeout.
