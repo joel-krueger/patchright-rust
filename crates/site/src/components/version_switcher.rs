@@ -258,4 +258,39 @@ mod tests {
         assert!(banner_for(false, "0.14.0", "0.14.0").is_none());
         assert!(banner_for(false, "0.14.0", "").is_none());
     }
+
+    // Guards the versions.json contract across the language boundary: the deploy
+    // script (producer) and this module's `Manifest` (consumer) must agree. A
+    // field rename on either side would silently break the switcher on the live
+    // site — nothing else feeds real producer output to the consumer.
+    #[cfg(unix)]
+    #[test]
+    fn update_manifest_output_matches_the_consumer_schema() {
+        let script = concat!(env!("CARGO_MANIFEST_DIR"), "/deploy/update-manifest.sh");
+        let root = std::env::temp_dir().join(format!(
+            "pw-manifest-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        for dir in ["v0.13.0", "v0.14.0", "dev"] {
+            std::fs::create_dir_all(root.join(dir)).unwrap();
+        }
+
+        let status = std::process::Command::new("bash")
+            .arg(script)
+            .arg(&root)
+            .status()
+            .expect("run update-manifest.sh");
+        assert!(status.success(), "update-manifest.sh should exit 0");
+
+        let json = std::fs::read_to_string(root.join("versions.json")).unwrap();
+        let m: Manifest =
+            serde_json::from_str(&json).expect("producer output must deserialize into Manifest");
+        assert_eq!(m.latest, "0.14.0");
+        assert_eq!(m.versions, vec!["0.14.0".to_string(), "0.13.0".to_string()]);
+
+        let _ = std::fs::remove_dir_all(&root);
+    }
 }

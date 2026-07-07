@@ -103,6 +103,13 @@ jobs:
           cargo clippy --manifest-path crates/site/Cargo.toml --target wasm32-unknown-unknown --all-targets -- -D warnings
           cargo clippy --manifest-path crates/site-e2e/Cargo.toml --all-targets -- -D warnings
 
+      # Host-target unit tests for the site crate (the switcher's version/banner
+      # logic and the versions.json producer/consumer contract). The crate is
+      # outside the root workspace, so `cargo nextest run --workspace` in test.yml
+      # never reaches these.
+      - name: Test site crate
+        run: cargo test --manifest-path crates/site/Cargo.toml
+
       # Dogfood gate: a canonical root-served dev build the binding can drive.
       # SITE_VERSION=dev so the switcher's dev-banner assertion holds; public-url
       # stays "/" so the e2e server (serving dist at root) resolves assets.
