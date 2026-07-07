@@ -19,7 +19,7 @@ pub fn FeatureCard(
     children: Children,
 ) -> impl IntoView {
     // An unreleased card only appears on the dev build.
-    if unreleased && env!("SITE_VERSION") != "dev" {
+    if unreleased && !crate::version::is_dev() {
         return ().into_any();
     }
 

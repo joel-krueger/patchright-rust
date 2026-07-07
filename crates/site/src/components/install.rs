@@ -7,7 +7,7 @@ use crate::snippets;
 pub fn Install() -> impl IntoView {
     // The dev (main HEAD) build is unreleased, so it installs from git, not the
     // crates.io version — that's how you get the features previewed below.
-    let is_dev = env!("SITE_VERSION") == "dev";
+    let is_dev = crate::version::is_dev();
 
     view! {
         <section id="install" class="mx-auto max-w-3xl px-6 py-12">

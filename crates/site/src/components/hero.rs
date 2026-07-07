@@ -15,7 +15,7 @@ const PLAYWRIGHT_DEV: &str = "1.61.1";
 pub fn Hero() -> impl IntoView {
     // The dev (main HEAD) build is unreleased and bundles a newer driver, so its
     // badges differ from a published release snapshot.
-    let is_dev = env!("SITE_VERSION") == "dev";
+    let is_dev = crate::version::is_dev();
     let playwright = if is_dev {
         PLAYWRIGHT_DEV
     } else {

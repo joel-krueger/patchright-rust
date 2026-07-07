@@ -1,10 +1,7 @@
+use crate::version::{SITE_VERSION, is_dev};
 use leptos::prelude::*;
 use leptos::task::spawn_local;
 use serde::Deserialize;
-
-/// Which snapshot this build is: `"dev"` for the main-HEAD build, or the
-/// release version (e.g. `"0.14.0"`). Injected by `build.rs` from `SITE_VERSION`.
-const CURRENT_VERSION: &str = env!("SITE_VERSION");
 
 /// `/versions.json`, maintained by the deploy: the newest published release and
 /// every published version (newest first).
@@ -93,7 +90,7 @@ pub fn VersionSwitcher() -> impl IntoView {
         }
     });
 
-    let is_dev = CURRENT_VERSION == "dev";
+    let is_dev = is_dev();
 
     // (message, link label, link href) when the viewer should be nudged elsewhere.
     let banner = move || -> Option<(String, String, String)> {
@@ -109,9 +106,9 @@ pub fn VersionSwitcher() -> impl IntoView {
                 format!("Go to {label} →"),
                 href,
             ))
-        } else if !m.latest.is_empty() && CURRENT_VERSION != m.latest {
+        } else if !m.latest.is_empty() && SITE_VERSION != m.latest {
             Some((
-                format!("You're viewing v{CURRENT_VERSION} — a newer release is available."),
+                format!("You're viewing v{SITE_VERSION} — a newer release is available."),
                 format!("Go to v{} →", m.latest),
                 format!("/v{}/", m.latest),
             ))
@@ -130,7 +127,7 @@ pub fn VersionSwitcher() -> impl IntoView {
                     on:change=move |ev| navigate_to(&event_target_value(&ev))
                 >
                     {move || {
-                        version_options(CURRENT_VERSION, manifest.get().as_ref())
+                        version_options(SITE_VERSION, manifest.get().as_ref())
                             .into_iter()
                             .map(|o| {
                                 view! {

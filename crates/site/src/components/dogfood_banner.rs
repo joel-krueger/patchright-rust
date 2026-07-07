@@ -56,7 +56,7 @@ pub fn DogfoodBanner() -> impl IntoView {
                     // Dev-only: a frame the run captured via the unreleased 1.61.0
                     // screencast API (with cursor decoration). Omitted on release
                     // snapshots until the feature ships.
-                    {(env!("SITE_VERSION") == "dev").then(|| view! {
+                    {crate::version::is_dev().then(|| view! {
                         <div class=card>
                             <div class="flex items-center gap-2">
                                 <h3 class="font-semibold text-rust-300">"Screencast frame"</h3>
