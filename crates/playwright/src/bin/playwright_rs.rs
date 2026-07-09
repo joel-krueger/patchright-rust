@@ -17,7 +17,8 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const DRIVER_BASE_URL: &str = "https://playwright.azureedge.net/builds/driver";
+const DRIVER_BASE_URL: &str =
+    "https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/releases/download/v1.61.1";
 
 #[derive(Parser)]
 #[command(name = "playwright-rs", version, about, long_about = None)]

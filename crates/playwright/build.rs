@@ -22,7 +22,8 @@ use std::io;
 use std::path::{Path, PathBuf};
 
 const PLAYWRIGHT_VERSION: &str = "1.61.1";
-const DRIVER_BASE_URL: &str = "https://playwright.azureedge.net/builds/driver";
+const DRIVER_BASE_URL: &str =
+    "https://github.com/Kaliiiiiiiiii-Vinyzu/patchright/releases/download/v1.61.1";
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
